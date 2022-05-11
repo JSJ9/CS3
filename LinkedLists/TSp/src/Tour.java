@@ -181,6 +181,60 @@ public class Tour
 		
 	}
 
+	public void insertSmallest(Point p) {
+		// If this is the first element being inserted, add it at the front.
+		if(this.size == 0) {
+			this.head = new Node(p);
+			this.head.next = null;
+		}
+		else {
+			/*
+			 * Iterate through the LinkedList inserting the point p at every index
+			 * 
+			 * As it is iterating, store the smallest distance of the graph
+			 * 
+			 * For each index visited, if the distance of the graph when the point p
+			 * is added at the index is less than the current smallest distance, store the
+			 * index of where p is currently being stored.
+			 * 
+			 * Regardless of whether or not the distance created when P is added at the index
+			 * it currently is, reset the chain of Nodes to be what it used to be.
+			 * 
+			 * At the end of iterating through the list, add the Point p where the smallest 
+			 * distance is created stored in index.
+			 */
+			double smallestDeltaDistance = Double.MAX_VALUE;
+			Node smallestPred = this.head;
+			Node smallestSucc = this.head;
+			Node temp = this.head;
+			Node pAsNode = new Node(p);
+			// Find the index where we need to insert P into for the smallest delta distance of the graph
+			while(temp != null) {
+				// Store the original state of the temporary Node's next value
+				Node tempNext = temp.next;
+				// Temporarily insert the element P into the linked list for calculations
+				pAsNode.next = tempNext;
+				temp.next = pAsNode;
+				// Calculate the distance with P where it currently is
+				double distance = this.distance();
+				// If we have a smaller change in distance than a different node, change what
+				// index we will insert p to
+				if(distance < smallestDeltaDistance) {
+					smallestPred = temp;
+					smallestSucc = tempNext;
+					smallestDeltaDistance = distance;
+				}
+				// Reset the LinkedList to its original state
+				temp.next = tempNext;
+				// Advance the search by changing the node that we are currently looking at
+				temp = temp.next;
+			}
+			// Insert the Point p into the LinkedList where delta distance is the smallest
+			pAsNode.next = smallestSucc;
+			smallestPred.next = pAsNode;
+		}
+		this.size++;
+	}
 
 	private class Node
 	{
